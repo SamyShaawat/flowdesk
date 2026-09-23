@@ -1,0 +1,25 @@
+{
+    'name': 'FlowDesk',
+    'version': '19.0.1.0.0',
+    'category': 'Services',
+    'summary': 'Business operations: lead to paid invoice',
+    'license': 'Other OSI approved licence',
+    'depends': [
+        'contacts',
+        'crm',
+        'sale_management',
+        'purchase',
+        'stock',
+        'hr',
+        'hr_expense',
+        'account',
+        'helpdesk',
+        'fleet',
+    ],
+    'data': [
+        'security/ir.model.access.csv',
+        'views/menus.xml',
+    ],
+    'installable': True,
+    'application': True,
+}
