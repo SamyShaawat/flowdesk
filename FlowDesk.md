@@ -41,7 +41,7 @@ C1 → C2 → C3 → C8 → C4 → C5 → C9 → C7 → C6 → C10 → C11
 Tick a box when every **Done when** point of that task works.
 
 - [x] C1. Clean Customer Database
-- [ ] C2. Professional Quotation Template
+- [x] C2. Professional Quotation Template
 - [ ] C3. Purchase to Stock Flow
 - [ ] C8. Vendor Bill 3-Way Match
 - [ ] C4. Employee Onboarding Checklist

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- C2: payment terms on quotation templates -->
+    <record id="sale_order_template_view_form_payment_term" model="ir.ui.view">
+        <field name="name">sale.order.template.form.flowdesk.payment.term</field>
+        <field name="model">sale.order.template</field>
+        <field name="inherit_id" ref="sale_management.sale_order_template_view_form"/>
+        <field name="arch" type="xml">
+            <field name="mail_template_id" position="before">
+                <field name="payment_term_id"/>
+            </field>
+        </field>
+    </record>
+</odoo>

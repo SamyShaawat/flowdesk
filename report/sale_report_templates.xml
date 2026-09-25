@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- C2: payment terms next to the quotation date and expiration on the PDF -->
+    <template id="report_saleorder_document_payment_term" inherit_id="sale.report_saleorder_document">
+        <div name="expiration_date" position="after">
+            <div t-if="doc.payment_term_id" class="col" name="payment_term">
+                <strong>Payment Terms</strong>
+                <div t-field="doc.payment_term_id"/>
+            </div>
+        </div>
+    </template>
+</odoo>

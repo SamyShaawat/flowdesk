@@ -27,6 +27,8 @@
         "security/ir.model.access.csv",
         "data/data.xml",
         "views/res_partner_views.xml",
+        "views/sale_order_template_views.xml",
+        "report/sale_report_templates.xml",
         "views/menus.xml",
     ],
     "demo": [

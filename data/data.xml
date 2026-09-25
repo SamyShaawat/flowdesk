@@ -15,4 +15,49 @@
             <field name="color">3</field>
         </record>
     </data>
+
+    <!-- C2: enable Quotation Templates, Pricelists and line discounts (Sales settings);
+         function: base.group_user is noupdate -->
+    <function model="res.groups" name="write" eval="[[ref('base.group_user')], {'implied_ids': [
+        (4, ref('sale_management.group_sale_order_template')),
+        (4, ref('product.group_product_pricelist')),
+        (4, ref('sale.group_discount_per_so_line')),
+    ]}]"/>
+
+    <!-- C2: professional quotation template -->
+    <data noupdate="1">
+        <!-- Bulk rule: 10% off any product when ordering 100 units or more on one line -->
+        <record id="pricelist_bulk" model="product.pricelist">
+            <field name="name">FlowDesk Standard (Bulk Discount)</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="pricelist_bulk_item_100" model="product.pricelist.item">
+            <field name="pricelist_id" ref="pricelist_bulk"/>
+            <field name="applied_on">3_global</field>
+            <field name="compute_price">percentage</field>
+            <field name="percent_price">10</field>
+            <field name="min_quantity">100</field>
+        </record>
+
+        <record id="sale_order_template_standard" model="sale.order.template">
+            <field name="name">FlowDesk Standard Quotation</field>
+            <field name="number_of_days">30</field>
+            <field name="payment_term_id" ref="account.account_payment_term_30days"/>
+            <field name="note" type="html">
+                <h4>Terms and Conditions</h4>
+                <ol>
+                    <li>This quotation is valid for 30 days from the quotation date.</li>
+                    <li>Payment is due within 30 days of the invoice date.</li>
+                    <li>Bulk discount: 10% off the unit price for any line ordering 100 units or more.</li>
+                    <li>Prices exclude taxes unless stated otherwise.</li>
+                    <li>Delivery dates are estimates and confirmed on order acceptance.</li>
+                    <li>Goods remain our property until paid in full.</li>
+                </ol>
+            </field>
+        </record>
+    </data>
+
+    <!-- New quotations start from this template (function: base.main_company is noupdate) -->
+    <function model="res.company" name="write"
+              eval="[[ref('base.main_company')], {'sale_order_template_id': ref('sale_order_template_standard')}]"/>
 </odoo>
