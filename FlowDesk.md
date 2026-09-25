@@ -36,6 +36,22 @@ If something is not clear, make a reasonable decision, write it down in a short 
 
 C1 → C2 → C3 → C8 → C4 → C5 → C9 → C7 → C6 → C10 → C11
 
+## Progress
+
+Tick a box when every **Done when** point of that task works.
+
+- [x] C1. Clean Customer Database
+- [ ] C2. Professional Quotation Template
+- [ ] C3. Purchase to Stock Flow
+- [ ] C8. Vendor Bill 3-Way Match
+- [ ] C4. Employee Onboarding Checklist
+- [ ] C5. Expense Approval Workflow
+- [ ] C9. Fleet and Driver Assignment
+- [ ] C7. Paid Helpdesk Ticket
+- [ ] C6. Sales Commission Feeding into Payroll
+- [ ] C10. Full Cycle - Lead to Paid Invoice with Commission
+- [ ] C11. Discount Limits with Manager Approval
+
 ---
 
 ### 🟢 C1. Clean Customer Database

@@ -37,6 +37,22 @@ If something is not clear, make a reasonable decision, write it down in a short 
 
 N1 → N2 → N3 → N4 → N5 → N6 → N7 → N8 → N9 → N10 → N11
 
+## Progress
+
+Tick a box when every **Done when** point of that task works.
+
+- [ ] N1. Mandatory Reason for Cancelled Quotations
+- [ ] N2. Automatic Follow-up on Silent Quotations
+- [ ] N3. Vendor Document Expiry Tracking
+- [ ] N4. Customer Credit Limit That Actually Blocks
+- [ ] N5. Return Reasons and Return Analysis
+- [ ] N6. Inventory Count Approval for Big Differences
+- [ ] N7. Customer Promise-to-Pay Tracking
+- [ ] N8. Fleet Service Reminders by Kilometers
+- [ ] N9. Multi-Level Purchase Approval by Amount and Department
+- [ ] N10. Employee Cash Advances Settled by Expenses
+- [ ] N11. Post-Dated Cheque Management
+
 ---
 
 ### 🟢 N1. Mandatory Reason for Cancelled Quotations
