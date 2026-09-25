@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- C1: one-click customer type filters (merging duplicates uses native Actions > Merge) -->
+    <record id="view_res_partner_filter_customer_type" model="ir.ui.view">
+        <field name="name">res.partner.select.flowdesk.customer.type</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <filter name="inactive" position="before">
+                <filter string="Wholesale" name="customer_type_wholesale"
+                        domain="[('category_id', 'in', %(flowdesk.partner_tag_wholesale)d)]"/>
+                <filter string="Retail" name="customer_type_retail"
+                        domain="[('category_id', 'in', %(flowdesk.partner_tag_retail)d)]"/>
+                <filter string="VIP" name="customer_type_vip"
+                        domain="[('category_id', 'in', %(flowdesk.partner_tag_vip)d)]"/>
+                <filter string="No Customer Type" name="customer_type_missing"
+                        domain="[('category_id', 'not in', [%(flowdesk.partner_tag_wholesale)d, %(flowdesk.partner_tag_retail)d, %(flowdesk.partner_tag_vip)d])]"/>
+                <separator/>
+            </filter>
+        </field>
+    </record>
+</odoo>

@@ -1,3 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- C1: duplicates on purpose, merge them via Contacts > select > Actions > Merge -->
+    <record id="partner_nile_traders" model="res.partner">
+        <field name="name">Nile Traders</field>
+        <field name="is_company" eval="True"/>
+        <field name="email">sales@niletraders.example.com</field>
+        <field name="category_id" eval="[(4, ref('partner_tag_wholesale'))]"/>
+    </record>
+    <record id="partner_nile_traders_dup" model="res.partner">
+        <field name="name">Nile Traders LLC</field>
+        <field name="is_company" eval="True"/>
+        <field name="email">sales@niletraders.example.com</field>
+    </record>
+    <record id="partner_delta_retail" model="res.partner">
+        <field name="name">Delta Home Store</field>
+        <field name="is_company" eval="True"/>
+        <field name="email">info@deltahome.example.com</field>
+        <field name="category_id" eval="[(4, ref('partner_tag_retail'))]"/>
+    </record>
+    <record id="partner_delta_retail_dup" model="res.partner">
+        <field name="name">Delta Home Stores</field>
+        <field name="is_company" eval="True"/>
+        <field name="email">info@deltahome.example.com</field>
+    </record>
+    <record id="partner_pharaoh_vip" model="res.partner">
+        <field name="name">Pharaoh Hotels</field>
+        <field name="is_company" eval="True"/>
+        <field name="email">purchasing@pharaohhotels.example.com</field>
+        <field name="category_id" eval="[(4, ref('partner_tag_wholesale')), (4, ref('partner_tag_vip'))]"/>
+    </record>
 </odoo>

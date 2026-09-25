@@ -1,3 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- C1: customer type tags -->
+    <data noupdate="1">
+        <record id="partner_tag_wholesale" model="res.partner.category">
+            <field name="name">Wholesale</field>
+            <field name="color">4</field>
+        </record>
+        <record id="partner_tag_retail" model="res.partner.category">
+            <field name="name">Retail</field>
+            <field name="color">10</field>
+        </record>
+        <record id="partner_tag_vip" model="res.partner.category">
+            <field name="name">VIP</field>
+            <field name="color">3</field>
+        </record>
+    </data>
 </odoo>

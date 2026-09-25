@@ -4,7 +4,7 @@
     "category": "Services",
     "summary": "Business operations: lead to paid invoice",
     "author": "Samy Mostafa Shaawat",
-    "license": "OEEL-1",
+    "license": "LGPL-3",
     "depends": [
         "base",
         "mail",
@@ -26,6 +26,7 @@
         "security/security.xml",
         "security/ir.model.access.csv",
         "data/data.xml",
+        "views/res_partner_views.xml",
         "views/menus.xml",
     ],
     "demo": [
