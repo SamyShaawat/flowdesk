@@ -53,3 +53,7 @@ flowdesk/
 ├── wizard/
 └── FlowDesk.md  # the task list
 ```
+
+## License
+
+[LGPL-3](LICENSE), the same license as Odoo Community.
