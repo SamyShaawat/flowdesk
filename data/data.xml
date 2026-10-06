@@ -60,4 +60,8 @@
     <!-- New quotations start from this template (function: base.main_company is noupdate) -->
     <function model="res.company" name="write"
               eval="[[ref('base.main_company')], {'sale_order_template_id': ref('sale_order_template_standard')}]"/>
+
+    <!-- C3: bill control on received quantities for every new product,
+         so a vendor bill can never exceed what was physically received -->
+    <function model="ir.default" name="set" eval="['product.template', 'purchase_method', 'receive']"/>
 </odoo>

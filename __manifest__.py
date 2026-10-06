@@ -13,6 +13,7 @@
         "sale_management",
         "purchase",
         "stock",
+        "purchase_stock",
         "hr",
         "hr_expense",
         "account",

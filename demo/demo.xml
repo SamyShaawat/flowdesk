@@ -29,4 +29,40 @@
         <field name="email">purchasing@pharaohhotels.example.com</field>
         <field name="category_id" eval="[(4, ref('partner_tag_wholesale')), (4, ref('partner_tag_vip'))]"/>
     </record>
+
+    <!-- C3: fast-moving product bought from a vendor, 50 in stock, reordered below 20 up to 100 -->
+    <record id="partner_cairo_packaging" model="res.partner">
+        <field name="name">Cairo Packaging Supplies</field>
+        <field name="is_company" eval="True"/>
+        <field name="email">orders@cairopackaging.example.com</field>
+    </record>
+    <record id="product_shipping_box" model="product.product">
+        <field name="name">Shipping Box (Medium)</field>
+        <field name="is_storable" eval="True"/>
+        <field name="list_price">4.0</field>
+        <field name="standard_price">2.5</field>
+        <field name="purchase_method">receive</field>
+        <field name="route_ids" eval="[(4, ref('purchase_stock.route_warehouse0_buy'))]"/>
+    </record>
+    <record id="product_shipping_box_supplier" model="product.supplierinfo">
+        <field name="product_tmpl_id" ref="product_shipping_box_product_template"/>
+        <field name="partner_id" ref="partner_cairo_packaging"/>
+        <field name="price">2.5</field>
+        <field name="delay">3</field>
+    </record>
+    <record id="product_shipping_box_quant" model="stock.quant">
+        <field name="product_id" ref="product_shipping_box"/>
+        <field name="inventory_quantity">50.0</field>
+        <field name="location_id" model="stock.location" eval="obj().env.ref('stock.warehouse0').lot_stock_id.id"/>
+    </record>
+    <function model="stock.quant" name="action_apply_inventory">
+        <function model="stock.quant" name="search" eval="[[('id', '=', ref('product_shipping_box_quant'))]]"/>
+    </function>
+    <record id="orderpoint_shipping_box" model="stock.warehouse.orderpoint">
+        <field name="product_id" ref="product_shipping_box"/>
+        <field name="warehouse_id" ref="stock.warehouse0"/>
+        <field name="location_id" model="stock.location" eval="obj().env.ref('stock.warehouse0').lot_stock_id.id"/>
+        <field name="product_min_qty">20.0</field>
+        <field name="product_max_qty">100.0</field>
+    </record>
 </odoo>
