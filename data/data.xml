@@ -64,4 +64,49 @@
     <!-- C3: bill control on received quantities for every new product,
          so a vendor bill can never exceed what was physically received -->
     <function model="ir.default" name="set" eval="['product.template', 'purchase_method', 'receive']"/>
+
+    <!-- C4: employee onboarding checklist; applied automatically in models/hr_employee.py.
+         Assignees default to Administrator (HR + IT); change "Assigned to" on each step for real users. -->
+    <data noupdate="1">
+        <record id="plan_onboarding_checklist" model="mail.activity.plan">
+            <field name="name">Onboarding Checklist</field>
+            <field name="res_model">hr.employee</field>
+        </record>
+        <record id="plan_onboarding_badge" model="mail.activity.plan.template">
+            <field name="plan_id" ref="plan_onboarding_checklist"/>
+            <field name="sequence">10</field>
+            <field name="summary">ID Badge</field>
+            <field name="responsible_type">other</field>
+            <field name="responsible_id" ref="base.user_admin"/>
+            <field name="delay_count">1</field>
+            <field name="delay_from">after_plan_date</field>
+        </record>
+        <record id="plan_onboarding_laptop" model="mail.activity.plan.template">
+            <field name="plan_id" ref="plan_onboarding_checklist"/>
+            <field name="sequence">20</field>
+            <field name="summary">Laptop Request</field>
+            <field name="responsible_type">other</field>
+            <field name="responsible_id" ref="base.user_admin"/>
+            <field name="delay_count">1</field>
+            <field name="delay_from">after_plan_date</field>
+        </record>
+        <record id="plan_onboarding_account" model="mail.activity.plan.template">
+            <field name="plan_id" ref="plan_onboarding_checklist"/>
+            <field name="sequence">30</field>
+            <field name="summary">Account Setup</field>
+            <field name="responsible_type">other</field>
+            <field name="responsible_id" ref="base.user_admin"/>
+            <field name="delay_count">2</field>
+            <field name="delay_from">after_plan_date</field>
+        </record>
+        <record id="plan_onboarding_orientation" model="mail.activity.plan.template">
+            <field name="plan_id" ref="plan_onboarding_checklist"/>
+            <field name="sequence">40</field>
+            <field name="summary">Orientation Meeting</field>
+            <field name="responsible_type">other</field>
+            <field name="responsible_id" ref="base.user_admin"/>
+            <field name="delay_count">3</field>
+            <field name="delay_from">after_plan_date</field>
+        </record>
+    </data>
 </odoo>
