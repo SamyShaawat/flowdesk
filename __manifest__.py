@@ -14,6 +14,8 @@
         "purchase",
         "stock",
         "purchase_stock",
+        "account_3way_match",
+        "accountant",
         "hr",
         "hr_expense",
         "account",
