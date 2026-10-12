@@ -56,7 +56,7 @@ Tick a box when every **Done when** point of that task works.
 - [x] C2. Professional Quotation Template
 - [x] C3. Purchase to Stock Flow
 - [x] C8. Vendor Bill 3-Way Match
-- [ ] C4. Employee Onboarding Checklist
+- [x] C4. Employee Onboarding Checklist
 - [ ] C5. Expense Approval Workflow
 - [ ] C9. Fleet and Driver Assignment
 - [ ] C7. Paid Helpdesk Ticket
