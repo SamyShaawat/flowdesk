@@ -109,4 +109,8 @@
             <field name="delay_from">after_plan_date</field>
         </record>
     </data>
+
+    <!-- C7: the In Progress stage needs a paid invoice (toggle "Requires Payment" on any stage) -->
+    <function model="helpdesk.stage" name="write"
+              eval="[[ref('helpdesk.stage_in_progress')], {'flowdesk_requires_payment': True}]"/>
 </odoo>

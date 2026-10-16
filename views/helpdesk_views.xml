@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- C7: show the sale order, invoices and payment status on the ticket -->
+    <record id="helpdesk_ticket_view_form_payment" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.form.flowdesk.payment</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="inherit_id" ref="helpdesk.helpdesk_ticket_view_form"/>
+        <field name="arch" type="xml">
+            <!-- helpdesk_sale keeps its Sales Order fields hidden; unhide them -->
+            <xpath expr="//field[@name='sale_order_id'][@groups='!sales_team.group_sale_salesman']" position="attributes">
+                <attribute name="invisible">False</attribute>
+            </xpath>
+            <xpath expr="//field[@name='sale_order_id'][@groups='sales_team.group_sale_salesman']" position="attributes">
+                <attribute name="invisible">False</attribute>
+            </xpath>
+            <xpath expr="//field[@name='sale_order_id'][@groups='sales_team.group_sale_salesman']" position="after">
+                <field name="flowdesk_payment_state" widget="badge"
+                       decoration-success="flowdesk_payment_state == 'paid'"
+                       decoration-danger="flowdesk_payment_state == 'unpaid'"
+                       decoration-warning="flowdesk_payment_state == 'not_invoiced'"
+                       invisible="not sale_order_id"/>
+            </xpath>
+            <div name="button_box" position="inside">
+                <button name="action_open_flowdesk_invoices" type="object" class="oe_stat_button"
+                        icon="fa-pencil-square-o" string="Invoices"
+                        invisible="not flowdesk_invoice_ids"/>
+            </div>
+        </field>
+    </record>
+
+    <record id="helpdesk_tickets_view_tree_payment" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.list.flowdesk.payment</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="inherit_id" ref="helpdesk.helpdesk_tickets_view_tree"/>
+        <field name="arch" type="xml">
+            <field name="stage_id" position="after">
+                <field name="flowdesk_payment_state" widget="badge" optional="show"
+                       decoration-success="flowdesk_payment_state == 'paid'"
+                       decoration-danger="flowdesk_payment_state == 'unpaid'"
+                       decoration-warning="flowdesk_payment_state == 'not_invoiced'"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="helpdesk_tickets_view_search_payment" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.search.flowdesk.payment</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="inherit_id" ref="helpdesk.helpdesk_tickets_view_search_base"/>
+        <field name="arch" type="xml">
+            <field name="stage_id" position="after">
+                <filter string="Unpaid" name="flowdesk_unpaid"
+                        domain="[('flowdesk_payment_state', 'in', ('unpaid', 'not_invoiced'))]"/>
+                <filter string="Paid" name="flowdesk_paid" domain="[('flowdesk_payment_state', '=', 'paid')]"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="helpdesk_stage_view_form_payment" model="ir.ui.view">
+        <field name="name">helpdesk.stage.form.flowdesk.payment</field>
+        <field name="model">helpdesk.stage</field>
+        <field name="inherit_id" ref="helpdesk.helpdesk_stage_view_form"/>
+        <field name="arch" type="xml">
+            <field name="fold" position="after">
+                <field name="flowdesk_requires_payment"/>
+            </field>
+        </field>
+    </record>
+</odoo>
