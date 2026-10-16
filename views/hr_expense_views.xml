@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- C5: approval trail on the expense: approver (Manager field, set on approval) and date -->
+    <record id="hr_expense_view_form_approval_date" model="ir.ui.view">
+        <field name="name">hr.expense.form.flowdesk.approval.date</field>
+        <field name="model">hr.expense</field>
+        <field name="inherit_id" ref="hr_expense.hr_expense_view_form"/>
+        <field name="arch" type="xml">
+            <field name="manager_id" position="after">
+                <field name="approval_date" string="Approved On" invisible="not approval_date"/>
+            </field>
+        </field>
+    </record>
+</odoo>
