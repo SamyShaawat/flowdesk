@@ -4,3 +4,4 @@ from . import account_move
 from . import hr_employee
 from . import hr_expense
 from . import helpdesk_ticket
+from . import account_payment_register
