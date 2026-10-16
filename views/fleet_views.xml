@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- C9: service/repair costs per driver and per vehicle.
+         Service.purchaser_id (Driver) is stored when the service is logged, so costs
+         stay with the old driver after the vehicle gets a new one. -->
+    <record id="fleet_service_cost_view_pivot" model="ir.ui.view">
+        <field name="name">fleet.vehicle.log.services.pivot.flowdesk.cost</field>
+        <field name="model">fleet.vehicle.log.services</field>
+        <field name="arch" type="xml">
+            <pivot string="Costs per Driver">
+                <field name="purchaser_id" type="row"/>
+                <field name="vehicle_id" type="row"/>
+                <field name="amount" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="fleet_service_cost_view_list" model="ir.ui.view">
+        <field name="name">fleet.vehicle.log.services.list.flowdesk.cost</field>
+        <field name="model">fleet.vehicle.log.services</field>
+        <field name="arch" type="xml">
+            <list string="Service Costs" default_order="amount desc">
+                <field name="date"/>
+                <field name="vehicle_id"/>
+                <field name="purchaser_id"/>
+                <field name="service_type_id"/>
+                <field name="description" optional="show"/>
+                <field name="amount" sum="Total"/>
+                <field name="currency_id" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="fleet_service_cost_action" model="ir.actions.act_window">
+        <field name="name">Costs per Driver</field>
+        <field name="res_model">fleet.vehicle.log.services</field>
+        <field name="view_mode">pivot,list</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'pivot', 'view_id': ref('fleet_service_cost_view_pivot')}),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('fleet_service_cost_view_list')})]"/>
+    </record>
+
+    <menuitem id="menu_fleet_costs_per_driver" name="Costs per Driver"
+              parent="fleet.menu_fleet_reporting" action="fleet_service_cost_action"
+              sequence="2" groups="fleet.fleet_group_manager"/>
+</odoo>

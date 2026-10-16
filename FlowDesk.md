@@ -58,7 +58,7 @@ Tick a box when every **Done when** point of that task works.
 - [x] C8. Vendor Bill 3-Way Match
 - [x] C4. Employee Onboarding Checklist
 - [x] C5. Expense Approval Workflow
-- [ ] C9. Fleet and Driver Assignment
+- [x] C9. Fleet and Driver Assignment
 - [ ] C7. Paid Helpdesk Ticket
 - [ ] C6. Sales Commission Feeding into Payroll
 - [ ] C10. Full Cycle - Lead to Paid Invoice with Commission
