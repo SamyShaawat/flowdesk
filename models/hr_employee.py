@@ -9,7 +9,8 @@ class HrEmployee(models.Model):
         employees = super().create(vals_list)
         # C4: every new hire gets the Onboarding Checklist plan, no manual launch.
         plan = self.env.ref('flowdesk.plan_onboarding_checklist', raise_if_not_found=False)
-        if plan:
+        # skip imports and install/demo data so they do not flood the assignee with activities
+        if plan and not (self.env.context.get('install_mode') or self.env.context.get('import_file')):
             today = fields.Date.context_today(self)
             for employee in employees:
                 for tpl in plan.template_ids:
