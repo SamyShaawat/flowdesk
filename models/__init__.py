@@ -5,3 +5,5 @@ from . import hr_employee
 from . import hr_expense
 from . import helpdesk_ticket
 from . import account_payment_register
+from . import discount_approval
+from . import res_users

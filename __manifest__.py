@@ -32,6 +32,7 @@
         "views/helpdesk_views.xml",
         "report/sale_report_templates.xml",
         "views/menus.xml",
+        "views/discount_approval_views.xml",
     ],
     "demo": [
         "demo/demo.xml",
