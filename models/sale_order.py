@@ -143,6 +143,12 @@ class SaleOrderLine(models.Model):
             limit = line.order_id._flowdesk_discount_limit() if line.order_id else None
             line.flowdesk_over_limit = limit is not None and not line.display_type and line.discount > limit
 
+    @api.depends('product_id', 'product_uom_id', 'product_uom_qty')
+    def _compute_discount(self):
+        # pricelist / quantity changes recompute the discount without going through write()
+        super()._compute_discount()
+        self.order_id._flowdesk_sync_approval()
+
     @api.model_create_multi
     def create(self, vals_list):
         lines = super().create(vals_list)
