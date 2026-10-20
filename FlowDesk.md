@@ -62,7 +62,7 @@ Tick a box when every **Done when** point of that task works.
 - [x] C7. Paid Helpdesk Ticket
 - [x] C6. Sales Commission Feeding into Payroll
 - [x] C10. Full Cycle - Lead to Paid Invoice with Commission
-- [ ] C11. Discount Limits with Manager Approval
+- [x] C11. Discount Limits with Manager Approval
 
 **Part 2 - Real Business Gaps**
 
