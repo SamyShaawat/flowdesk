@@ -24,6 +24,14 @@ class FlowdeskDiscountApproval(models.Model):
     decision_date = fields.Datetime(string="Decided On", readonly=True)
     comment = fields.Text(string="Manager Comment")
 
+    _PROTECTED_FIELDS = {'state', 'approver_id', 'decision_date'}
+
+    def write(self, vals):
+        # decisions only through Approve / Reject (comment check + log); the system (sudo) syncs requests
+        if self._PROTECTED_FIELDS & vals.keys() and not self.env.su:
+            raise AccessError(_("Use the Approve or Reject button to decide on a discount."))
+        return super().write(vals)
+
     def _notify_managers(self):
         managers = self.env.ref('sales_team.group_sale_manager').sudo().user_ids
         for approval in self:
@@ -47,7 +55,7 @@ class FlowdeskDiscountApproval(models.Model):
                 raise UserError(_("%s was already decided or cancelled.", approval.name))
             if state == 'rejected' and not approval.comment:
                 raise UserError(_("Write a comment explaining the rejection."))
-            approval.write({'state': state, 'approver_id': self.env.user.id,
+            approval.sudo().write({'state': state, 'approver_id': self.env.user.id,
                             'decision_date': fields.Datetime.now()})
             approval.activity_unlink(['mail.mail_activity_data_todo'])
             label = _("approved") if state == 'approved' else _("rejected")
