@@ -11,7 +11,8 @@ class HrPayslip(models.Model):
         input_type = self.env.ref('flowdesk.input_sales_commission', raise_if_not_found=False)
         if not input_type:
             return
-        for slip in self:
+        # validated / paid payslips keep the commission they were generated with
+        for slip in self.filtered(lambda s: s.state == 'draft'):
             commands = [Command.unlink(line.id) for line in slip.input_line_ids if line.input_type_id == input_type]
             user = slip.employee_id.user_id
             if user and slip.date_from and slip.date_to:
