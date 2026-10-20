@@ -93,6 +93,9 @@ class SaleOrder(models.Model):
             approval._notify_managers()
 
     def _flowdesk_check_discount(self):
+        # portal / website customers confirm with their own user: only internal users are gated
+        if not self.env.user._is_internal():
+            return
         for order in self:
             if order._flowdesk_uncovered_lines():
                 state = dict(self._fields['flowdesk_discount_state'].selection)[order._flowdesk_get_state()]
