@@ -60,8 +60,8 @@ Tick a box when every **Done when** point of that task works.
 - [x] C5. Expense Approval Workflow
 - [x] C9. Fleet and Driver Assignment
 - [x] C7. Paid Helpdesk Ticket
-- [ ] C6. Sales Commission Feeding into Payroll
-- [ ] C10. Full Cycle - Lead to Paid Invoice with Commission
+- [x] C6. Sales Commission Feeding into Payroll
+- [x] C10. Full Cycle - Lead to Paid Invoice with Commission
 - [x] C11. Discount Limits with Manager Approval
 
 **Part 2 - Real Business Gaps**

@@ -4,6 +4,11 @@ from odoo import api, fields, models
 class HrEmployee(models.Model):
     _inherit = 'hr.employee'
 
+    # C6: commission paid on the untaxed amount of this employee's paid customer invoices
+    flowdesk_commission_rate = fields.Float(
+        string="Sales Commission (%)", default=5.0, groups='hr.group_hr_user',
+        help="Percentage of the untaxed amount of paid customer invoices, paid out on the payslip.")
+
     @api.model_create_multi
     def create(self, vals_list):
         employees = super().create(vals_list)
