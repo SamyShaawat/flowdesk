@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- C10: delivery / invoice / payment smart buttons and commission on the opportunity -->
+    <record id="crm_lead_view_form_trace" model="ir.ui.view">
+        <field name="name">crm.lead.form.flowdesk.trace</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button name="action_open_flowdesk_pickings" type="object" class="oe_stat_button"
+                        icon="fa-truck" invisible="not flowdesk_picking_ids">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">Deliveries</span>
+                    </div>
+                </button>
+                <button name="action_open_flowdesk_invoices" type="object" class="oe_stat_button"
+                        icon="fa-pencil-square-o" invisible="not flowdesk_invoice_ids">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">Invoices</span>
+                    </div>
+                </button>
+                <button name="action_open_flowdesk_payments" type="object" class="oe_stat_button"
+                        icon="fa-money" invisible="not flowdesk_payment_ids">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">Payments</span>
+                    </div>
+                </button>
+                <button name="action_open_flowdesk_invoices" type="object" class="oe_stat_button"
+                        icon="fa-percent" invisible="not flowdesk_commission_amount">
+                    <field name="flowdesk_commission_amount" widget="statinfo" string="Commission"/>
+                </button>
+            </div>
+        </field>
+    </record>
+</odoo>

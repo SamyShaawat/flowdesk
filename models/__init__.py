@@ -6,3 +6,4 @@ from . import hr_expense
 from . import helpdesk_ticket
 from . import account_payment_register
 from . import hr_payslip
+from . import crm_lead
