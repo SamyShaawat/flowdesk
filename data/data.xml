@@ -153,4 +153,29 @@ result_name = inputs['SALES_COMMISSION'].name
         </record>
     </data>
     <function model="hr.payroll.structure" name="write" eval="[[ref('hr_payroll.structure_002'), ref('hr_payroll.default_structure')], {'input_line_type_ids': [(4, ref('input_sales_commission'))]}]"/>
+
+    <!-- N2: follow-up activity types and the daily job -->
+    <data noupdate="1">
+        <record id="activity_type_follow_up" model="mail.activity.type">
+            <field name="name">Follow up</field>
+            <field name="icon">fa-phone</field>
+            <field name="res_model">sale.order</field>
+            <field name="delay_count">0</field>
+        </record>
+        <record id="activity_type_escalation" model="mail.activity.type">
+            <field name="name">Escalation: silent quotation</field>
+            <field name="icon">fa-exclamation-triangle</field>
+            <field name="res_model">sale.order</field>
+            <field name="delay_count">0</field>
+        </record>
+        <record id="cron_silent_quotations" model="ir.cron">
+            <field name="name">FlowDesk: follow up silent quotations</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_flowdesk_followup()</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+        </record>
+    </data>
 </odoo>
