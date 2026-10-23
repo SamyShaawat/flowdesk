@@ -9,3 +9,4 @@ from . import discount_approval
 from . import res_users
 from . import hr_payslip
 from . import crm_lead
+from . import cancel_reason

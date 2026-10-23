@@ -38,6 +38,7 @@
         "report/sale_report_templates.xml",
         "views/menus.xml",
         "views/discount_approval_views.xml",
+        "views/cancel_reason_views.xml",
     ],
     "demo": [
         "demo/demo.xml",
