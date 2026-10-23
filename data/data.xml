@@ -202,4 +202,17 @@ result_name = inputs['SALES_COMMISSION'].name
             <field name="sequence">5</field>
         </record>
     </data>
+
+    <!-- N3: daily reminder for vendor documents expiring soon -->
+    <data noupdate="1">
+        <record id="cron_vendor_document_expiry" model="ir.cron">
+            <field name="name">FlowDesk: remind expiring vendor documents</field>
+            <field name="model_id" ref="model_flowdesk_vendor_document"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_remind_expiring()</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+        </record>
+    </data>
 </odoo>

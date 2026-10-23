@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- N3: vendor documents with expiry status -->
+    <record id="flowdesk_vendor_document_view_list" model="ir.ui.view">
+        <field name="name">flowdesk.vendor.document.list</field>
+        <field name="model">flowdesk.vendor.document</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="state == 'expired'" decoration-warning="state == 'expiring'">
+                <field name="partner_id" column_invisible="context.get('default_partner_id')"/>
+                <field name="doc_type"/>
+                <field name="number"/>
+                <field name="expiry_date"/>
+                <field name="days_left" optional="hide"/>
+                <field name="attachment" filename="attachment_name" widget="binary"/>
+                <field name="attachment_name" column_invisible="1"/>
+                <field name="state" widget="badge" decoration-success="state == 'valid'"
+                       decoration-warning="state == 'expiring'" decoration-danger="state == 'expired'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="flowdesk_vendor_document_view_form" model="ir.ui.view">
+        <field name="name">flowdesk.vendor.document.form</field>
+        <field name="model">flowdesk.vendor.document</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="doc_type"/>
+                            <field name="number"/>
+                        </group>
+                        <group>
+                            <field name="expiry_date"/>
+                            <field name="days_left"/>
+                            <field name="attachment" filename="attachment_name"/>
+                            <field name="attachment_name" invisible="1"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="flowdesk_vendor_document_view_search" model="ir.ui.view">
+        <field name="name">flowdesk.vendor.document.search</field>
+        <field name="model">flowdesk.vendor.document</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="number"/>
+                <field name="doc_type"/>
+                <filter name="expired" string="Expired" domain="[('state', '=', 'expired')]"/>
+                <filter name="expiring" string="Expiring Soon" domain="[('state', '=', 'expiring')]"/>
+                <filter name="valid" string="Valid" domain="[('state', '=', 'valid')]"/>
+                <group>
+                    <filter name="by_vendor" string="Vendor" context="{'group_by': 'partner_id'}"/>
+                    <filter name="by_type" string="Type" context="{'group_by': 'doc_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="flowdesk_vendor_document_action" model="ir.actions.act_window">
+        <field name="name">Vendor Documents</field>
+        <field name="res_model">flowdesk.vendor.document</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- one click: every vendor with an expired or expiring document -->
+    <record id="flowdesk_vendor_expired_action" model="ir.actions.act_window">
+        <field name="name">Vendors with Expired / Expiring Documents</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('flowdesk_document_ids.state', 'in', ['expired', 'expiring'])]</field>
+    </record>
+
+    <menuitem id="menu_flowdesk_vendor_documents" name="Vendor Documents"
+              parent="menu_flowdesk_operations" action="flowdesk_vendor_document_action" sequence="30"
+              groups="purchase.group_purchase_user"/>
+    <menuitem id="menu_flowdesk_vendor_expired" name="Vendors with Expired Documents"
+              parent="menu_flowdesk_operations" action="flowdesk_vendor_expired_action" sequence="31"
+              groups="purchase.group_purchase_user"/>
+
+    <!-- Documents tab on the vendor -->
+    <record id="res_partner_view_form_flowdesk_documents" model="ir.ui.view">
+        <field name="name">res.partner.form.flowdesk.documents</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Documents" name="flowdesk_documents">
+                    <field name="flowdesk_document_ids" context="{'default_partner_id': id}"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="res_partner_view_search_flowdesk_documents" model="ir.ui.view">
+        <field name="name">res.partner.search.flowdesk.documents</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <filter name="inactive" position="before">
+                <filter string="Expired Documents" name="flowdesk_doc_expired"
+                        domain="[('flowdesk_document_ids.state', '=', 'expired')]"/>
+                <filter string="Expiring Documents" name="flowdesk_doc_expiring"
+                        domain="[('flowdesk_document_ids.state', '=', 'expiring')]"/>
+                <separator/>
+            </filter>
+        </field>
+    </record>
+
+    <!-- banner on the purchase order -->
+    <record id="purchase_order_view_form_flowdesk_documents" model="ir.ui.view">
+        <field name="name">purchase.order.form.flowdesk.documents</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <field name="flowdesk_vendor_expired" invisible="1"/>
+                <div class="alert alert-danger mb-0" role="alert" invisible="not flowdesk_vendor_expired">
+                    This vendor has an expired document. Check the Documents tab on the vendor before ordering.
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>
