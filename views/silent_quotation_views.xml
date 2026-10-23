@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- N2: days waiting in the quotation list (sortable) and on the form -->
+    <record id="sale_order_view_list_flowdesk_waiting" model="ir.ui.view">
+        <field name="name">sale.order.list.flowdesk.waiting</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_quotation_tree"/>
+        <field name="arch" type="xml">
+            <field name="state" position="after">
+                <field name="flowdesk_days_waiting" string="Days Waiting" optional="show"
+                       decoration-danger="flowdesk_days_waiting >= 7 and state == 'sent'"
+                       decoration-warning="flowdesk_days_waiting >= 3 and state == 'sent'"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="sale_order_view_form_flowdesk_waiting" model="ir.ui.view">
+        <field name="name">sale.order.form.flowdesk.waiting</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']/ancestor::group[1]" position="inside">
+                <field name="flowdesk_days_waiting" invisible="state != 'sent'"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- N2: thresholds in Sales settings -->
+    <record id="res_config_settings_view_form_flowdesk_followup" model="ir.ui.view">
+        <field name="name">res.config.settings.form.flowdesk.followup</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="sale.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//block[@name='quotation_order_setting_container']" position="inside">
+                <setting string="Silent Quotation Follow-up"
+                         help="Days a sent quotation can stay unanswered before a Follow up activity is created for the salesperson, and before the sales manager is alerted.">
+                    <div class="content-group">
+                        <div class="row mt8">
+                            <label for="flowdesk_followup_days" class="col-lg-5 o_light_label"/>
+                            <field name="flowdesk_followup_days"/>
+                        </div>
+                        <div class="row">
+                            <label for="flowdesk_escalation_days" class="col-lg-5 o_light_label"/>
+                            <field name="flowdesk_escalation_days"/>
+                        </div>
+                    </div>
+                </setting>
+            </xpath>
+        </field>
+    </record>
+</odoo>
