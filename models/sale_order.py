@@ -1,3 +1,5 @@
+from markupsafe import Markup
+
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
@@ -18,6 +20,9 @@ class SaleOrder(models.Model):
         help="Days since the quotation was sent or the customer last wrote. Refreshed daily.")
     flowdesk_followup_date = fields.Datetime(copy=False, readonly=True)
     flowdesk_escalation_date = fields.Datetime(copy=False, readonly=True)
+    flowdesk_cancel_reason_id = fields.Many2one(
+        'flowdesk.cancel.reason', string="Cancel Reason", copy=False, tracking=True, ondelete='restrict')
+    flowdesk_cancel_note = fields.Text(string="Cancel Note", copy=False)
 
     @api.depends('sale_order_template_id')
     def _compute_payment_term_id(self):
@@ -174,6 +179,33 @@ class SaleOrder(models.Model):
         if not error and self._flowdesk_uncovered_lines():
             self._flowdesk_check_discount()
         return error
+
+    # N1: the Cancel button calls this instead of action_cancel, so other callers
+    # (portal, website abandoned cart, event booths) keep working without a reason.
+    def action_flowdesk_cancel(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _("Cancel Reason"),
+            'res_model': 'flowdesk.cancel.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'active_ids': self.ids},
+        }
+
+    def _flowdesk_cancel(self, reason, note):
+        for order in self:
+            if order.state == 'cancel':
+                continue
+            order.action_cancel()
+            order.write({'flowdesk_cancel_reason_id': reason.id, 'flowdesk_cancel_note': note})
+            body = _("Cancelled. Reason: %s", reason.name)
+            if note:
+                body = Markup("%s<br/>%s") % (body, _("Note: %s", note))
+            order.message_post(body=body)
+
+    def action_draft(self):
+        self.write({'flowdesk_cancel_reason_id': False, 'flowdesk_cancel_note': False})
+        return super().action_draft()
 
     def action_quotation_send(self):
         self._flowdesk_check_discount()

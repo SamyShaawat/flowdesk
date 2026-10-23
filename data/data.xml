@@ -178,4 +178,28 @@ result_name = inputs['SALES_COMMISSION'].name
             <field name="interval_type">days</field>
         </record>
     </data>
+
+    <!-- N1: default cancel reasons (managers can add more) -->
+    <data noupdate="1">
+        <record id="cancel_reason_price" model="flowdesk.cancel.reason">
+            <field name="name">Price too high</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="cancel_reason_delivery" model="flowdesk.cancel.reason">
+            <field name="name">Delivery too slow</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="cancel_reason_competitor" model="flowdesk.cancel.reason">
+            <field name="name">Went to competitor</field>
+            <field name="sequence">3</field>
+        </record>
+        <record id="cancel_reason_changed_mind" model="flowdesk.cancel.reason">
+            <field name="name">Customer changed mind</field>
+            <field name="sequence">4</field>
+        </record>
+        <record id="cancel_reason_no_response" model="flowdesk.cancel.reason">
+            <field name="name">No response</field>
+            <field name="sequence">5</field>
+        </record>
+    </data>
 </odoo>
