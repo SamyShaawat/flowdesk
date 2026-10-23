@@ -154,6 +154,55 @@ result_name = inputs['SALES_COMMISSION'].name
     </data>
     <function model="hr.payroll.structure" name="write" eval="[[ref('hr_payroll.structure_002'), ref('hr_payroll.default_structure')], {'input_line_type_ids': [(4, ref('input_sales_commission'))]}]"/>
 
+    <!-- N2: follow-up activity types and the daily job -->
+    <data noupdate="1">
+        <record id="activity_type_follow_up" model="mail.activity.type">
+            <field name="name">Follow up</field>
+            <field name="icon">fa-phone</field>
+            <field name="res_model">sale.order</field>
+            <field name="delay_count">0</field>
+        </record>
+        <record id="activity_type_escalation" model="mail.activity.type">
+            <field name="name">Escalation: silent quotation</field>
+            <field name="icon">fa-exclamation-triangle</field>
+            <field name="res_model">sale.order</field>
+            <field name="delay_count">0</field>
+        </record>
+        <record id="cron_silent_quotations" model="ir.cron">
+            <field name="name">FlowDesk: follow up silent quotations</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_flowdesk_followup()</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+        </record>
+    </data>
+
+    <!-- N1: default cancel reasons (managers can add more) -->
+    <data noupdate="1">
+        <record id="cancel_reason_price" model="flowdesk.cancel.reason">
+            <field name="name">Price too high</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="cancel_reason_delivery" model="flowdesk.cancel.reason">
+            <field name="name">Delivery too slow</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="cancel_reason_competitor" model="flowdesk.cancel.reason">
+            <field name="name">Went to competitor</field>
+            <field name="sequence">3</field>
+        </record>
+        <record id="cancel_reason_changed_mind" model="flowdesk.cancel.reason">
+            <field name="name">Customer changed mind</field>
+            <field name="sequence">4</field>
+        </record>
+        <record id="cancel_reason_no_response" model="flowdesk.cancel.reason">
+            <field name="name">No response</field>
+            <field name="sequence">5</field>
+        </record>
+    </data>
+
     <!-- N3: daily reminder for vendor documents expiring soon -->
     <data noupdate="1">
         <record id="cron_vendor_document_expiry" model="ir.cron">

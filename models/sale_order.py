@@ -1,3 +1,5 @@
+from markupsafe import Markup
+
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
@@ -10,6 +12,17 @@ class SaleOrder(models.Model):
         [('required', "Approval Required"), ('waiting', "Waiting for Approval"),
          ('approved', "Discount Approved"), ('rejected', "Discount Rejected")],
         string="Discount Approval", compute='_compute_flowdesk_discount_state')
+
+    # N2: "no reply" = no customer message in the chatter since the quotation was sent.
+    flowdesk_sent_date = fields.Datetime(string="Sent On", copy=False, readonly=True)
+    flowdesk_days_waiting = fields.Integer(
+        string="Days Waiting", copy=False, readonly=True,
+        help="Days since the quotation was sent or the customer last wrote. Refreshed daily.")
+    flowdesk_followup_date = fields.Datetime(copy=False, readonly=True)
+    flowdesk_escalation_date = fields.Datetime(copy=False, readonly=True)
+    flowdesk_cancel_reason_id = fields.Many2one(
+        'flowdesk.cancel.reason', string="Cancel Reason", copy=False, tracking=True, ondelete='restrict')
+    flowdesk_cancel_note = fields.Text(string="Cancel Note", copy=False)
 
     @api.depends('sale_order_template_id')
     def _compute_payment_term_id(self):
@@ -92,6 +105,59 @@ class SaleOrder(models.Model):
                 dict(vals, order_id=order.id, salesperson_id=(order.user_id or order.create_uid).id))
             approval._notify_managers()
 
+    def _flowdesk_last_contact(self):
+        """Latest of: sent date, last message written by the customer (or a colleague of theirs)."""
+        self.ensure_one()
+        last = self.flowdesk_sent_date or self.write_date
+        message = self.env['mail.message'].sudo().search([
+            ('model', '=', 'sale.order'), ('res_id', '=', self.id),
+            ('message_type', 'in', ('email', 'comment')),
+            ('author_id', 'child_of', self.partner_id.commercial_partner_id.id),
+        ], order='date desc', limit=1)
+        return max(last, message.date) if message else last
+
+    def _flowdesk_manager(self):
+        self.ensure_one()
+        manager = self.team_id.user_id
+        if not manager:
+            manager = self.env.ref('sales_team.group_sale_manager').sudo().user_ids.filtered(
+                lambda u: u.active and u.id != self.env.ref('base.user_root').id)[:1]
+        return manager
+
+    def _flowdesk_has_open_activity(self, xmlid):
+        self.ensure_one()
+        return bool(self.activity_ids.filtered(lambda a: a.activity_type_id == self.env.ref(xmlid)))
+
+    @api.model
+    def _cron_flowdesk_followup(self):
+        get = self.env['ir.config_parameter'].sudo().get_param
+        followup_days = int(get('flowdesk.followup_days', 3))
+        escalation_days = int(get('flowdesk.escalation_days', 7))
+        # confirmed / cancelled quotations are no longer waiting
+        self.search([('state', '!=', 'sent'), ('flowdesk_days_waiting', '!=', 0)]).write({'flowdesk_days_waiting': 0})
+        now = fields.Datetime.now()
+        for order in self.search([('state', '=', 'sent')]):
+            last = order._flowdesk_last_contact()
+            days = (now - last).days
+            if order.flowdesk_days_waiting != days:
+                order.flowdesk_days_waiting = days
+            # a customer reply after our reminder starts a new cycle
+            if order.flowdesk_followup_date and order.flowdesk_followup_date < last:
+                order.flowdesk_followup_date = order.flowdesk_escalation_date = False
+            if days >= followup_days and not order.flowdesk_followup_date \
+                    and not order._flowdesk_has_open_activity('flowdesk.activity_type_follow_up'):
+                order.activity_schedule(
+                    'flowdesk.activity_type_follow_up', user_id=(order.user_id or order._flowdesk_manager()).id,
+                    summary=_("Follow up: no answer for %s days", days))
+                order.flowdesk_followup_date = now
+            manager = order._flowdesk_manager()
+            if days >= escalation_days and manager and not order.flowdesk_escalation_date \
+                    and not order._flowdesk_has_open_activity('flowdesk.activity_type_escalation'):
+                order.activity_schedule(
+                    'flowdesk.activity_type_escalation', user_id=manager.id,
+                    summary=_("Escalation: no answer for %s days", days))
+                order.flowdesk_escalation_date = now
+
     def _flowdesk_check_discount(self):
         # portal / website customers confirm with their own user: only internal users are gated
         if not self.env.user._is_internal():
@@ -114,6 +180,33 @@ class SaleOrder(models.Model):
             self._flowdesk_check_discount()
         return error
 
+    # N1: the Cancel button calls this instead of action_cancel, so other callers
+    # (portal, website abandoned cart, event booths) keep working without a reason.
+    def action_flowdesk_cancel(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _("Cancel Reason"),
+            'res_model': 'flowdesk.cancel.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'active_ids': self.ids},
+        }
+
+    def _flowdesk_cancel(self, reason, note):
+        for order in self:
+            if order.state == 'cancel':
+                continue
+            order.action_cancel()
+            order.write({'flowdesk_cancel_reason_id': reason.id, 'flowdesk_cancel_note': note})
+            body = _("Cancelled. Reason: %s", reason.name)
+            if note:
+                body = Markup("%s<br/>%s") % (body, _("Note: %s", note))
+            order.message_post(body=body)
+
+    def action_draft(self):
+        self.write({'flowdesk_cancel_reason_id': False, 'flowdesk_cancel_note': False})
+        return super().action_draft()
+
     def action_quotation_send(self):
         self._flowdesk_check_discount()
         return super().action_quotation_send()
@@ -129,6 +222,9 @@ class SaleOrder(models.Model):
         return super().message_post(**kwargs)
 
     def write(self, vals):
+        if vals.get('state') == 'sent':
+            vals = dict(vals, flowdesk_sent_date=fields.Datetime.now(), flowdesk_days_waiting=0,
+                        flowdesk_followup_date=False, flowdesk_escalation_date=False)
         res = super().write(vals)
         if 'user_id' in vals:
             self._flowdesk_sync_approval()

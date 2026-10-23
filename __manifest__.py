@@ -39,6 +39,8 @@
         "views/menus.xml",
         "views/discount_approval_views.xml",
         "views/vendor_document_views.xml",
+        "views/silent_quotation_views.xml",
+        "views/cancel_reason_views.xml",
     ],
     "demo": [
         "demo/demo.xml",
